@@ -11,8 +11,8 @@ module.exports = {
     extend: {},
   },
   daisyui: {
-    darkTheme: "dark",
-    themes: ["dark", "wireframe", "cupcake"],
+    darkTheme: "black",
+    themes: ["black", "wireframe", "cupcake"],
   },
   plugins: [
     require('@tailwindcss/typography'),
