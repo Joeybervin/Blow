@@ -1,41 +1,34 @@
 import { SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import { hasCookie, getCookie, CookieValueTypes, setCookie, getCookies } from "cookies-next";
+import { GetServerSidePropsContext } from "next";
+
+
 interface NavbarProps {
-    navbarProps?: string; // Remplacez any par le type approprié de pageProps
+    visibility: string; 
+    theme: CookieValueTypes ;
+    onChangeTheme: (newTheme: CookieValueTypes) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ navbarProps }) => {
+const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme  } : NavbarProps) => {
 
-    const [theme, setTheme] = useState<CookieValueTypes>(getCookie("theme") || "cupcake")
     const [themeIcon, setThemeIcon] = useState<string>(theme === "black" ? "dark" : theme === "wireframe" ? "light" : "default")
 
 
-    useEffect(() => {
-        const themeSavedInCookie = hasCookie('theme')
-        if (themeSavedInCookie) setTheme(getCookie('theme'))
-        console.log("navbar theme : ",getCookie("theme"))
-    }, []);
+    const changeTheme = (themeChoose: CookieValueTypes, saveCookie: boolean) => {
+        const themeUpdated = themeChoose;
+        onChangeTheme(themeUpdated)
+        setThemeIcon(themeUpdated === "black" ? "dark" : themeUpdated === "wireframe" ? "light" : "default")
 
-
-
-    const changeTheme = (theme: SetStateAction<CookieValueTypes>, saveCookie : boolean) => {
-        setTheme(theme)
-        setThemeIcon(theme === "black" ? "dark" : theme === "wireframe" ? "light" : "default")
-
-        if (saveCookie) getThemeInCookie(theme)
+        if (saveCookie && getCookie("savedTheme") === true) {
+            setCookie("theme", themeUpdated, { maxAge: 30 * 24 * 60 * 60 * 1000 })
+        }
     }
 
-    const getThemeInCookie = (theme: SetStateAction<CookieValueTypes>) => {
-        if (getCookie("savedTheme") === true) {
-            console.log("je suis autorisé à enregistrer les cookies de theme")
-            setCookie("theme", theme , {maxAge: 30 * 24 * 60 * 60 * 1000 })
-        }
-    }    
 
     
     return (
-        <nav className={`navbar p-0 ${navbarProps} `} >
+        <nav className={`navbar p-0 ${visibility} `} >
 
             <div className="navbar-start">
                 <p className="text-3xl font-black italic tracking-wide text-sky-100 max-h-fit" >Blow</p>
@@ -49,15 +42,15 @@ const Navbar: React.FC<NavbarProps> = ({ navbarProps }) => {
 
 
                     <div className="dropdown-content flex flex-col space-y-2.5">
-                        <button onClick={() => changeTheme("cupcake", true)} className="btn btn-circle btn-sm btn-outline">
+                        <button data-set-theme="cupcake"  onClick={() => {changeTheme("cupcake", true)}} className="btn btn-circle btn-sm btn-outline">
                             <Image src={`/icons/theme/cupcake-default.png`} width={24} height={24} alt="" />
                         </button>
 
-                        <button onClick={() => changeTheme("wireframe", true)} className="btn btn-circle btn-sm btn-outline">
+                        <button data-set-theme="wireframe"  onClick={() => {changeTheme("wireframe", true)}} className="btn btn-circle btn-sm btn-outline">
                             <Image src={`/icons/theme/${theme}-light.png`} width={24} height={24} alt="" />
                         </button>
 
-                        <button onClick={() => changeTheme("black", true)} className="btn btn-circle btn-sm btn-outline">
+                        <button data-set-theme="black"  onClick={() =>{ changeTheme("black", true)}} className="btn btn-circle btn-sm btn-outline">
                             <Image src={`/icons/theme/${theme}-dark.png`} width={24} height={24} alt="" />
                         </button>
                     </div>
@@ -68,13 +61,9 @@ const Navbar: React.FC<NavbarProps> = ({ navbarProps }) => {
             </div>
 
 
-
-
-
-
-
         </nav>
     )
 }
+
 
 export default Navbar;

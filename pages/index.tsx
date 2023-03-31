@@ -1,80 +1,68 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
+import { CookieValueTypes, getCookie, getCookies, hasCookie } from 'cookies-next';
 /* components */
 import Navbar from '@/components/Navbar';
 import CookiesToast from '@/components/CookiesToast';
 import SearchInput from '@/components/SearchInput'
 /* style */
 import { M_PLUS_Rounded_1c } from 'next/font/google';
-import { CookieValueTypes, getCookie, hasCookie } from 'cookies-next';
+import { GetServerSidePropsContext } from 'next';
+
+
 const mPLUSRounded1c = M_PLUS_Rounded_1c({
   subsets: ['latin'],
   weight: ['100', '400', '700'],
 })
 
-
-
-interface LocationCoord {
-  latitude: number;
-  longitude: number;
+interface HomeProps {
+  savedTheme : CookieValueTypes;
+  lat : CookieValueTypes;
+  long : CookieValueTypes;
+  cityName : CookieValueTypes;
 }
 
 
+export default function Home({savedTheme} : HomeProps) {
 
-export default function Home() {
+  const location = { lat: 48.866667, long: 2.333333 , cityName: "Paris" }
 
-  const [location, setLocation] = useState<LocationCoord>({ latitude: 48.866667, longitude: 2.333333 });
-  const axios = require('axios');
-  const [search, setSearch] = useState<string>("")
+  const [theme, setTheme] = useState<CookieValueTypes>(savedTheme)
 
-  const fetchTodayWeatherAPI = async ({ latitude, longitude }: LocationCoord): Promise<object> => {
-    let todayForecast;
-    try {
-      todayForecast = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,rain_sum,precipitation_probability_max,windspeed_10m_max,winddirection_10m_dominant&current_weather=true&timezone=auto`);
-      console.log(todayForecast.data)
-      return todayForecast.data
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+  const [search, setSearch] = useState<string>("");
+
+  const [coco, setCoco] = useState<number>(0)
+
+  
+  console.log(theme)
+
+
+  const handleThemeChange = (newTheme : CookieValueTypes) => {
+    const themeSelected = newTheme ;
+    setTheme(themeSelected)
   }
+
 /*   fetchTodayWeatherAPI(location) */
 
-  const getCityNameFromLatAndLong = async ({ latitude, longitude }: LocationCoord): Promise<object> => {
-    let cityName;
-    try {
-      cityName = await axios.get(`http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${process.env.OPEN_WEATHER_API_KEY}`);
-      return cityName.data
-    } catch (error) {
-      console.log(error);
-      throw error;
 
-    }
-
-  }
-
-  useEffect(() => {
+/*   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           console.log(coords)
-          setLocation({ latitude: coords.latitude, longitude: coords.longitude });
+          setLocation({ ...location, lat: coords.latitude, long: coords.longitude });
 
         },
         (error) => {
           console.error(error);
-          setLocation({ latitude: 48.866667, longitude: 2.333333 }); // Paris
+          setLocation({...location, lat: 48.866667, long: 2.333333 }); // Paris
         }
       );
     } else {
       console.error('Geolocation is not supported');
-      setLocation({ latitude: 48.866667, longitude: 2.333333 }); // Paris
+      setLocation({...location, lat: 48.866667, long: 2.333333 }); // Paris
     }
-  }, []);
-
-
-
-
+  }, []); */
 
 
   return (
@@ -87,13 +75,14 @@ export default function Home() {
         <title>Blow - Prévisions météo</title>
       </Head>
 
-      <main className={`${mPLUSRounded1c.className} min-h-screen`}>
+      <main className={`${mPLUSRounded1c.className} min-h-screen`}  data-theme={theme}>
+
 
 
         <div className="flex flex-wrap flex-col sm:flex-row min-h-screen">
 
           <section className="flex-auto sm:min-w-52 sm:max-w-96 p-3">
-          <Navbar navbarProps='block md:hidden' />
+          <Navbar visibility='block md:hidden' onChangeTheme={handleThemeChange} theme={theme}  />
             {/* search bar */}
             <SearchInput 
               onChange={(e) => setSearch(e.target.value)}
@@ -106,7 +95,7 @@ export default function Home() {
 
           <section className="flex-auto bg-primary w-full sm:w-96 p-3">
             {/* Nvabar */}
-            <Navbar navbarProps='hidden md:block' />
+            <Navbar visibility='hidden md:block' onChangeTheme={handleThemeChange} theme={theme} />
             {/* week forecast */}
             <section className="flex"></section>
 
@@ -120,3 +109,17 @@ export default function Home() {
     </>
   )
 }
+
+export const getServerSideProps = ({req , res} : GetServerSidePropsContext) => {
+
+  const allSavedCookies = getCookies({req , res});
+  const savedTheme = allSavedCookies.theme ?? 'cupcake';
+
+  return {
+    props: {
+      savedTheme,
+    },
+  }
+}
+
+

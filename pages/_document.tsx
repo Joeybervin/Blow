@@ -1,24 +1,13 @@
-import { CookieValueTypes, getCookie, hasCookie } from 'cookies-next'
 import { Html, Head, Main, NextScript } from 'next/document'
 import Script from 'next/script'
-import { useEffect, useState } from 'react';
 import Footer from '@/components/Footer';
 
 
 export default function Document() {
 
-  const [theme, setTheme] = useState<CookieValueTypes>(hasCookie("theme") ? getCookie('theme') : "cupcake");
-
-  useEffect(() => {
-    const themeSavedInCookie = hasCookie('theme')
-    if (themeSavedInCookie) setTheme(getCookie("theme"))
-    
-}, []);
-
-console.log(theme)
 
   return (
-    <Html lang="fr" data-theme={theme}>
+    <Html lang="fr">
       <Head />
       <body>
         <Main />
