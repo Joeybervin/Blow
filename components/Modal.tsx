@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
-import createUserCookiesPreferences from "@/helpers/cookies"
+import createUserCookiesPreferences from "@/helpers/createUserCookiesPreferences"
 import { getCookie, hasCookie } from 'cookies-next';
 
 const Modal: React.FC = () => {

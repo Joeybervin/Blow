@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import createUserCookiesPreferences from "@/helpers/cookies"
+import createUserCookiesPreferences from "@/helpers/createUserCookiesPreferences"
 import { hasCookie } from 'cookies-next';
 import Modal from './Modal';
-
-
-
 
 const CookiesToast: React.FC = () => {
 
