@@ -1,19 +1,19 @@
-import { CookieValueTypes, getCookie, hasCookie } from 'cookies-next';
+import { getCookie, hasCookie } from 'cookies-next';
 
 export interface Position {
-    lat: number  | CookieValueTypes;
-    long: number  | CookieValueTypes;
-    city: GeolocationPosition | CookieValueTypes;
+    lat: number ;
+    long: number;
+    city: string;
 }
 
 export function getCookiePosition()  {
 
-    if (getCookie("savedLocation") === true && hasCookie("city")) {
+    if ( hasCookie("city")) {
 
             return {
                 lat: Number(getCookie("lat")),
                 long: Number(getCookie("long")),
-                city: getCookie("city"),
+                city: getCookie("city")!.toString(),
             };
             
         } 

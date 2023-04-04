@@ -10,12 +10,12 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: NavbarProps) => {
 
-    const [themeIcon, setThemeIcon] = useState<string>(theme === "black" ? "dark" : theme === "wireframe" ? "light" : "default")
+    const [themeIcon, setThemeIcon] = useState<string>(theme === "dark" ? "dark" : theme === "wireframe" ? "light" : "default")
 
     const changeTheme = (themeChoose: CookieValueTypes, saveCookie: boolean) => {
         const themeUpdated = themeChoose;
         onChangeTheme(themeUpdated)
-        setThemeIcon(themeUpdated === "black" ? "dark" : themeUpdated === "wireframe" ? "light" : "default")
+        setThemeIcon(themeUpdated === "dark" ? "dark" : themeUpdated === "wireframe" ? "light" : "default")
 
         if (saveCookie && getCookie("savedTheme") === true) {
             setCookie("theme", themeUpdated, { maxAge: 30 * 24 * 60 * 60 * 1000 })
@@ -45,7 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: Nav
                             <Image src={`/icons/theme/${theme}-light.png`} width={24} height={24} alt="" />
                         </button>
 
-                        <button data-set-theme="black" onClick={() => { changeTheme("black", true) }} className="btn btn-circle btn-sm btn-outline">
+                        <button data-set-theme="dark" onClick={() => { changeTheme("dark", true) }} className="btn btn-circle btn-sm btn-outline">
                             <Image src={`/icons/theme/${theme}-dark.png`} width={24} height={24} alt="" />
                         </button>
                     </div>
