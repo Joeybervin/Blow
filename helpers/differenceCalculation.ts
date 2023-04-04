@@ -18,7 +18,7 @@ export const differenceCalculation = (pastNumber: number, currentNumber: number)
     return difference
 }
 
-export const timeDifferenceCalculation = (currentDayTime: Date, pastDayTime: Date): string => {
+export const timeDifferenceCalculation = (currentDayTime: string, pastDayTime: string): string => {
     
     
     const yesterdayHours = new Date(pastDayTime).getHours();

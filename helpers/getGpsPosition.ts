@@ -1,6 +1,7 @@
 import axios from "axios";
+import { Position } from "@/interfaces";
 
-const getGpsPosition = async ()=> {
+export const getGpsPosition = async (): Promise<Position> => {
     if ('geolocation' in navigator) {
         try {
             const { coords } = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -21,4 +22,3 @@ const getGpsPosition = async ()=> {
     return { lat: 0, long: 0, city: "" }
 }
 
-export default getGpsPosition ;

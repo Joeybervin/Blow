@@ -1,11 +1,7 @@
 import { setCookie } from 'cookies-next';
+import { EssentialsCookies } from '@/interfaces';
 
-interface CookieValues {
-    theme: boolean;
-    location: boolean;
-}
-
-const createUserCookiesPreferences = (cookiesPreferences: string , cookieValue?: CookieValues) => {
+export const createUserCookiesPreferences = (cookiesPreferences: string , cookieValue?: EssentialsCookies):void => {
 
     if (cookiesPreferences === "allAccepted") {
         setCookie('savedTheme', true, { maxAge: 30 * 24 * 60 * 60 * 1000 })
@@ -24,4 +20,3 @@ const createUserCookiesPreferences = (cookiesPreferences: string , cookieValue?:
 
 }
 
-export default createUserCookiesPreferences

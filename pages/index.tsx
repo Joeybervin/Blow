@@ -2,17 +2,14 @@
 import Head from 'next/head'
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { CookieValueTypes, getCookie, getCookies, setCookie } from 'cookies-next';
+import { CookieValueTypes, getCookies } from 'cookies-next';
 import axios from 'axios';
 import { GetServerSidePropsContext } from 'next';
 /* helpers */
-import getGpsPosition from '@/helpers/getGpsPosition';
-import fetchWeather from '@/helpers/fetchWeather';
-import { getCookiePosition, Position } from '@/helpers/getCookiePosition';
-import savePositionCookie from '@/helpers/savePositionCookie';
-import { formatDate, formatTime } from '@/helpers/formatDate';
-import { differenceCalculation, timeDifferenceCalculation } from '@/helpers/differenceCalculation';
-import {uvIndicator, uvIndicatorColor as uvIndicatorString} from '@/helpers/uvIndicator';
+import {fetchWeather, fetchAirQuality, getCookiePosition, getGpsPosition, differenceCalculation, savePositionCookie, timeDifferenceCalculation, uvIndicatorString, uvIndicator, formatDate, formatTime} from '@/helpers';
+/* Interfaces */
+import { Weather, AirQuality, Position } from '@/interfaces'; 
+
 /* components */
 import Navbar from '@/components/Navbar';
 import CookiesToast from '@/components/CookiesToast';
@@ -34,10 +31,10 @@ interface HomeProps {
 }
 
 
-
 export default function Home({ savedTheme }: HomeProps) {
 
-  const [weather, setWeather] = useState<any>(undefined);
+  const [weather, setWeather] = useState<Weather>();
+  const [airQuality, setAirQuality] = useState<AirQuality>();
   const [currentWeatherIndex, setCurrentWeatherIndex] = useState<number>()
   const [location, setLocation] = useState<Position>({ city: '', lat: 0, long: 0 });
   const [theme, setTheme] = useState<CookieValueTypes>(savedTheme);
@@ -219,36 +216,40 @@ export default function Home({ savedTheme }: HomeProps) {
                         <div className='flex flex-col items-center'>
                           <Image src="/icons/weather/uv-index.svg" width={75} height={75} alt="indice UV" />
                           <div className='mt-2'>
-                            <p className="flex flex-nowrap items-center gap-x-1">
+                            <div className="flex flex-nowrap items-center gap-x-1">
                               {[...Array(12)].map((_, index) => {
                                 return (
-                                  <span className={`${uvIndicator(weather.daily.uv_index_max[1], index)}`} key={index}> {index} </span>
+                                  <p className={` ${uvIndicator(weather.daily.uv_index_max[1], index)}`} key={index}> {index} </p>
                                 )
                               })}
-                            </p>
-                            <p className='text-center uppercase py-1'>{uvIndicatorString(weather.daily.uv_index_max[1]).indicator}</p>
+                            </div>
+                            <p className='text-center font-black uppercase mt-2 py-1'>{uvIndicatorString(weather.daily.uv_index_max[1]).indicator}</p>
                           </div>
                         </div>
                       </CurentWeatherHighlight>
-                      {/* HUMIDITY */}
+
+
+                      {/* PRECIPITATION PROBABILITY */}
                       <CurentWeatherHighlight title="Taux d'humidité">
                         <div className='flex justify-center items-center h-5/6'>
                           <p className='mb-3'>
-                            <span className='text-6xl'>16</span>
+                            <span className='text-6xl'>{weather.daily.precipitation_probability_max[1]}</span>
                             <span className='align-top'> %</span>
                           </p>
                         </div>
                       </CurentWeatherHighlight>
+                      
                       {/* WIND SPEED */}
                       <CurentWeatherHighlight title="Vent">
                         <div className='flex flex-col justify-center items-center h-5/6'>
                           <p className=''>
                             <span className='text-6xl'>{weather.current_weather.windspeed}</span>
-                            <span className='align-bottom'> km/h</span>
+                            <span className='align-bottom'> {weather.daily_units.windspeed_10m_max}</span>
                           </p>
                           <Image src="/icons/weather/wind.svg" height={30} width={30} alt="indice UV" />
                         </div>
                       </CurentWeatherHighlight>
+
                       {/* AIR QUALITY */}
                       <CurentWeatherHighlight title="Qualité de l'air">
                         <div className='flex flex-col items-center'>

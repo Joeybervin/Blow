@@ -1,12 +1,7 @@
 import { getCookie, hasCookie } from 'cookies-next';
+import { Position } from '@/interfaces'
 
-export interface Position {
-    lat: number ;
-    long: number;
-    city: string;
-}
-
-export function getCookiePosition()  {
+export function getCookiePosition(): Position  {
 
     if ( hasCookie("city")) {
 
