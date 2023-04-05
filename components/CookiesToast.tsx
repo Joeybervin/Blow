@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import createUserCookiesPreferences from "@/helpers/createUserCookiesPreferences"
+import { createUserCookiesPreferences } from "@/helpers/index"
 import { hasCookie } from 'cookies-next';
 import Modal from './Modal';
 
-const CookiesToast: React.FC = () => {
+export const CookiesToast: React.FC = () => {
 
     const [cookiesPreferencesSelected, setCookiesPreferencesSelected] = useState<boolean>()
 
@@ -40,6 +40,4 @@ const CookiesToast: React.FC = () => {
         </>
     )
 
-}
-
-export default CookiesToast;
+};

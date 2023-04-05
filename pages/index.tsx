@@ -6,21 +6,13 @@ import { CookieValueTypes, getCookies } from 'cookies-next';
 import axios from 'axios';
 import { GetServerSidePropsContext } from 'next';
 /* helpers */
-import {fetchWeather, fetchAirQuality, getCookiePosition, getGpsPosition, differenceCalculation, savePositionCookie, timeDifferenceCalculation, uvIndicatorString, uvIndicator, formatDate, formatTime} from '@/helpers';
+import { fetchWeather, fetchAirQuality, getCookiePosition, getGpsPosition, differenceCalculation, savePositionCookie, timeDifferenceCalculation, uvIndicatorString, uvIndicator, formatDate, formatTime } from '@/helpers';
 /* Interfaces */
-import { Weather, AirQuality, Position } from '@/interfaces'; 
-
+import { AirQuality, Position, Weather } from '@/interfaces';
 /* components */
-import Navbar from '@/components/Navbar';
-import CookiesToast from '@/components/CookiesToast';
-import SearchInput from '@/components/SearchInput'
-import Alert from '@/components/Alert';
-import LoadingCard from '@/components/LoadingCard';
-import { CurentWeatherHighlight } from '@/components/HighlightCard';
+import { Alert, CookiesToast, CurentWeatherHighlight, LoadingCard, Navbar, SearchInput } from '@/components';
 /* style */
 import { M_PLUS_Rounded_1c } from 'next/font/google';
-
-
 const mPLUSRounded1c = M_PLUS_Rounded_1c({
   subsets: ['latin'],
   weight: ['100', '400', '700'],
@@ -29,7 +21,6 @@ const mPLUSRounded1c = M_PLUS_Rounded_1c({
 interface HomeProps {
   savedTheme: CookieValueTypes;
 }
-
 
 export default function Home({ savedTheme }: HomeProps) {
 
@@ -45,17 +36,17 @@ export default function Home({ savedTheme }: HomeProps) {
   useEffect(() => {
     async function getLocation() {
 
-      // get : Cookie stored coord | default location coords (Paris)
       const newCoords = getCookiePosition()
-
       setLocation({ city: newCoords.city, lat: newCoords.lat, long: newCoords.long })
 
-      // open-meteo API call
       let weatherInfos = await fetchWeather({ lat: newCoords.lat, long: newCoords.long })
       setWeather(weatherInfos)
+      let airQualityInfos = await fetchAirQuality({ lat: newCoords.lat, long: newCoords.long })
+      setAirQuality(airQualityInfos)
     }
     getLocation();
   }, []);
+
 
   // Create a alert error message for 3 seconds
   const createAlertMessage = (message: string) => {
@@ -77,10 +68,12 @@ export default function Home({ savedTheme }: HomeProps) {
       const result = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${search}&language=fr&count=1&format=json`)
 
       setLocation({ lat: result.data.results[0].latitude, long: result.data.results[0].longitude, city: result.data.results[0].name })
-      // Get the new weather informations
+      /* weather */
       const weatherInfos = await fetchWeather({ lat: result.data.results[0].latitude, long: result.data.results[0].longitude })
-      // Set the new weather informations
       setWeather(weatherInfos)
+      /* air quality */
+      const airQualityInformations = await fetchAirQuality({ lat: result.data.results[0].latitude, long: result.data.results[0].longitude });
+      setAirQuality(airQualityInformations);
 
     } catch (error) {
       createAlertMessage("Désolé, nous n'arrivons pas à trouver cette ville.");
@@ -91,12 +84,13 @@ export default function Home({ savedTheme }: HomeProps) {
     const newCoord = await getGpsPosition()
     if (newCoord.city !== undefined || newCoord.city !== "") {
       setLocation(newCoord);
-      // Save coord in cookies
       savePositionCookie(newCoord);
-      // Get the new weather informations
+      /* weather */
       const weatherInfos = await fetchWeather({ lat: newCoord.lat, long: newCoord.long });
-      // Set the new weather informations
       setWeather(weatherInfos);
+      /* air quality */
+      const airQualityInformations = await fetchAirQuality({ lat: newCoord.lat, long: newCoord.long });
+      setAirQuality(airQualityInformations);
     }
     else {
       createAlertMessage("Nous avons rencontré une erreur avec le système de géolocalisation")
@@ -104,7 +98,8 @@ export default function Home({ savedTheme }: HomeProps) {
   }
 
 
-  console.log(weather)
+  console.log("WEATHER : ", weather)
+  console.log("AIR QUALITY : ", airQuality)
 
   return (
     <>
@@ -150,26 +145,18 @@ export default function Home({ savedTheme }: HomeProps) {
                       <span className="font-black text-4xl sm:text-5xl">{weather.current_weather.temperature} </span>
                       <span className="align-top text-xl sm:text-2xl">{weather.hourly_units.temperature_2m}</span>
                     </p>
-                    <div className="flex flex-col space-y-3">
-                      {/* WEATHER CODE => WEATHER DESCRIPTION */}
-                      <div className="flex justify-between items-center flex-wrap gap-y-3 gap-x-5 border-2 rounded-lg w-full p-4">
-                        <p className='font-black text-center'>{location.city}</p>
-                        <p className='text-center' >{formatDate(weather.current_weather.time)}</p>
-                      </div>
-                      {/* LOCATION & DATE => dd/mm/yyyy */}
-                      <div className="flex justify-between items-center flex-wrap gap-y-3 gap-x-5 border-2 rounded-lg w-full p-4">
-                        <p className='font-black text-center'>{location.city}</p>
-                        <p className='text-center' >{formatDate(weather.current_weather.time)}</p>
-                      </div>
-                      {/* TIME => hh:mm */}
-                      <div className="flex justify-between items-center flex-wrap gap-y-3 gap-x-5 border-2 rounded-lg w-full p-4">
-                        <p className='font-black text-center'>{location.city}</p>
-                        <p className='text-center' >{formatDate(weather.current_weather.time)}</p>
-                      </div>
+                    {/* LOCATION & DATE => dd/mm/yyyy */}
+                    <div className="flex justify-between items-center flex-wrap gap-y-3 gap-x-5 border-2 rounded-lg w-full p-4">
+                      <p className='font-black text-center'>{location.city}</p>
+                      <p className='text-center' >{formatDate(weather.current_weather.time)}</p>
                     </div>
+
                     <div className="divider"></div>
 
+
                     <div className="flex flex-wrap gap-3">
+
+                     
 
                       {/* MAX TEMP & MIN TEMP */}
                       <CurentWeatherHighlight title="Températures max / min">
@@ -238,7 +225,7 @@ export default function Home({ savedTheme }: HomeProps) {
                           </p>
                         </div>
                       </CurentWeatherHighlight>
-                      
+
                       {/* WIND SPEED */}
                       <CurentWeatherHighlight title="Vent">
                         <div className='flex flex-col justify-center items-center h-5/6'>
@@ -251,20 +238,6 @@ export default function Home({ savedTheme }: HomeProps) {
                       </CurentWeatherHighlight>
 
                       {/* AIR QUALITY */}
-                      <CurentWeatherHighlight title="Qualité de l'air">
-                        <div className='flex flex-col items-center'>
-                          <Image src="/icons/weather/smoke-particles.svg" width={75} height={75} alt="indice UV" />
-                          <div className='mt-2'>1 2 3 5 6 7 8 9</div>
-                        </div>
-                      </CurentWeatherHighlight>
-                      {/* POLLEN */}
-                      <CurentWeatherHighlight title="Qualité de l'air">
-                        <div className='flex flex-col items-center'>
-                          <Image src="/icons/weather/smoke-particles.svg" width={75} height={75} alt="indice UV" />
-                          <div className='mt-2'>1 2 3 5 6 7 8 9</div>
-                        </div>
-                      </CurentWeatherHighlight>
-                      {/* VISIBILITY */}
                       <CurentWeatherHighlight title="Qualité de l'air">
                         <div className='flex flex-col items-center'>
                           <Image src="/icons/weather/smoke-particles.svg" width={75} height={75} alt="indice UV" />

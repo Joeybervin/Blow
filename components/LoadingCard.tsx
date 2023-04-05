@@ -1,6 +1,6 @@
 import React from "react";
 
-const LoadingCard = () => {
+export const LoadingCard = () => {
     return (
         <div className="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">
             <div className="animate-pulse flex space-x-4">
@@ -21,4 +21,3 @@ const LoadingCard = () => {
 };
 
 
-export default LoadingCard;

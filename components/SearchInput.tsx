@@ -1,13 +1,7 @@
 import React, { MouseEvent } from 'react';
+import { InputProps } from '@/interfaces'
 
-interface inputProps {
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
-    value: string;
-    onGpsData: () => void;
-    onEnterPressed: (value: any) => void;
-}
-
-const SearchInput: React.FC<inputProps> = ({ onChange, value, onGpsData, onEnterPressed }) => {
+export const SearchInput: React.FC<InputProps> = ({ onChange, value, onGpsData, onEnterPressed }) => {
 
     // Get user location with google
     function handleGeolocationClick(event: MouseEvent<HTMLButtonElement>) {
@@ -45,7 +39,5 @@ const SearchInput: React.FC<inputProps> = ({ onChange, value, onGpsData, onEnter
             </div>
         </form>
     )
-}
-
-export default SearchInput;
+};
 

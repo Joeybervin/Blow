@@ -6,3 +6,4 @@ export { savePositionCookie } from './savePositionCookie';
 export { formatDate, formatTime } from './formatDate';
 export { differenceCalculation, timeDifferenceCalculation } from './differenceCalculation';
 export { uvIndicator, uvIndicatorColor as uvIndicatorString } from './uvIndicator';
+export { createUserCookiesPreferences } from './createUserCookiesPreferences';

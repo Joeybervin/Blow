@@ -1,14 +1,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { getCookie, CookieValueTypes, setCookie } from "cookies-next";
-
-interface NavbarProps {
+export interface NavbarProps {
     visibility: string;
     theme: CookieValueTypes;
     onChangeTheme: (newTheme: CookieValueTypes) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: NavbarProps) => {
+export const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: NavbarProps) => {
 
     const [themeIcon, setThemeIcon] = useState<string>(theme === "dark" ? "dark" : theme === "wireframe" ? "light" : "default")
 
@@ -22,6 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: Nav
         }
     }
 
+    console.log("THEME : ",theme)
     return (
         <nav className={`navbar p-0 ${visibility} `} >
 
@@ -53,7 +53,5 @@ const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme }: Nav
             </div>
         </nav>
     )
-}
+};
 
-
-export default Navbar;

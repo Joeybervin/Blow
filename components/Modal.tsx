@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
-import createUserCookiesPreferences from "@/helpers/createUserCookiesPreferences"
+import { createUserCookiesPreferences } from "@/helpers"
 import { getCookie, hasCookie } from 'cookies-next';
 
-const Modal: React.FC = () => {
+export const Modal: React.FC = () => {
 
     interface CookiesParams {
         theme: boolean ;

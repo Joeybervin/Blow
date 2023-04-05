@@ -1,13 +1,6 @@
-import { HTMLAttributes } from "react";
+import { AlertProps } from '@/interfaces';
 
-interface AlertProps extends HTMLAttributes<HTMLDivElement> {
-  message: string;
-  visibility: string;
-}
-
-
-
-const Alert = ({message, visibility ,...props} : AlertProps) => {
+export const Alert = ({message, visibility }: AlertProps) => {
     return (
         <div className={`${visibility} absolute bottom-10 right-10 z-20 alert alert-error shadow-lg max-w-fit`}>
             <div>
@@ -18,4 +11,3 @@ const Alert = ({message, visibility ,...props} : AlertProps) => {
     )
 };
 
-export default Alert;
