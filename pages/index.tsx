@@ -1,12 +1,15 @@
+
 /* eslint-disable react/no-unescaped-entities */
 import Head from 'next/head'
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { CookieValueTypes, getCookies } from 'cookies-next';
 import axios from 'axios';
+import { CldImage } from 'next-cloudinary';
 import { GetServerSidePropsContext } from 'next';
 /* helpers */
-import { fetchWeather, fetchAirQuality, getCookiePosition, getGpsPosition, differenceCalculation, savePositionCookie, timeDifferenceCalculation, uvIndicatorString, uvIndicator, formatDate, formatTime } from '@/helpers';
+import { airQualityIndicator, differenceCalculation, fetchWeather, fetchAirQuality, formatDate, formatTime, getCookiePosition, getGpsPosition, getHourlyDataIndex, getWeatherIcon, savePositionCookie, timeDifferenceCalculation } from '@/helpers';
+/* utils */
+import roundValue from '@/utils/roundValue'
 /* Interfaces */
 import { AirQuality, Position, Weather } from '@/interfaces';
 /* components */
@@ -26,7 +29,6 @@ export default function Home({ savedTheme }: HomeProps) {
 
   const [weather, setWeather] = useState<Weather>();
   const [airQuality, setAirQuality] = useState<AirQuality>();
-  const [currentWeatherIndex, setCurrentWeatherIndex] = useState<number>()
   const [location, setLocation] = useState<Position>({ city: '', lat: 0, long: 0 });
   const [theme, setTheme] = useState<CookieValueTypes>(savedTheme);
   const [search, setSearch] = useState<string>("");
@@ -43,6 +45,8 @@ export default function Home({ savedTheme }: HomeProps) {
       setWeather(weatherInfos)
       let airQualityInfos = await fetchAirQuality({ lat: newCoords.lat, long: newCoords.long })
       setAirQuality(airQualityInfos)
+
+
     }
     getLocation();
   }, []);
@@ -117,7 +121,7 @@ export default function Home({ savedTheme }: HomeProps) {
 
           <Alert visibility={`${alertMessage.visibility}`} message={alertMessage.message} />
 
-          <section className="flex-auto sm:min-w-52 sm:max-w-96 p-3">
+          <section className="flex-auto w-full sm:w-56 sm:max-w-md p-4 mx-auto">
             {/* NAVBAR */}
             <Navbar visibility='block md:hidden' onChangeTheme={handleThemeChange} theme={theme} />
             {/* SEARCH INPUT */}
@@ -132,7 +136,7 @@ export default function Home({ savedTheme }: HomeProps) {
             {/* icon */}
 
 
-            <div className='flex flex-col justify-items-center max-w-xl mx-auto	mt-10'>
+            <div className='flex flex-col justify-items-center max-w-xl mx-auto	mt-5'>
               {
                 weather === undefined ?
 
@@ -141,109 +145,95 @@ export default function Home({ savedTheme }: HomeProps) {
                   :
 
                   <>
-                    <p className='text-center mb-3'>
-                      <span className="font-black text-4xl sm:text-5xl">{weather.current_weather.temperature} </span>
-                      <span className="align-top text-xl sm:text-2xl">{weather.hourly_units.temperature_2m}</span>
-                    </p>
+
+                    <div className='flex flex-wrap gap-x-5 items-center justify-center p-5 pt-0'>
+                      <CldImage format={"svg"} className="w-40	sm:w-44" width="200" height="200" src={`Blow/${weather.daily.weathercode[1]}${getWeatherIcon(weather.daily.weathercode[1])}`} alt="<Alt Text>" />
+                      <p className='text-center'>
+                        <span className="font-black text-3xl sm:text-4xl">{weather.current_weather.temperature} </span>
+                        <span className="align-top text-lg">{weather.hourly_units.temperature_2m}</span>
+                      </p>
+                    </div>
+
                     {/* LOCATION & DATE => dd/mm/yyyy */}
                     <div className="flex justify-between items-center flex-wrap gap-y-3 gap-x-5 border-2 rounded-lg w-full p-4">
-                      <p className='font-black text-center'>{location.city}</p>
-                      <p className='text-center' >{formatDate(weather.current_weather.time)}</p>
+                      <p className='font-black text-center text-white text-xs sm:text-md'>{location.city}</p>
+                      <p className='text-center text-xs sm:text-md' >{formatDate(weather.current_weather.time)}</p>
                     </div>
 
                     <div className="divider"></div>
 
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col gap-3">
 
-                     
+                      <div className='flex flex-wrap gap-3 w-full'>
+                        {/* MAX TEMP & MIN TEMP */}
+                        <CurentWeatherHighlight
+                          dataContainerCustomClassName="align-items-center px-3"
+                          unit={`${weather.daily_units.temperature_2m_max}`}
+                          data={[
+                            {
+                              imgSrc: "thermometer-warmer",
+                              mainData: `${weather.daily.temperature_2m_max[1]}`,
+                              data: `${differenceCalculation(weather.daily.temperature_2m_max[0], weather.daily.temperature_2m_max[1])}`
+                            },
+                            {
+                              imgSrc: "thermometer-colder",
+                              mainData: `${weather.daily.temperature_2m_min[1]}`,
+                              data: `${differenceCalculation(weather.daily.temperature_2m_min[0], weather.daily.temperature_2m_min[1])}`
+                            },
+                          ]}
+                        />
 
-                      {/* MAX TEMP & MIN TEMP */}
-                      <CurentWeatherHighlight title="Températures max / min">
-                        <div className='flex justify-between gap-3 max-[300px]:flex-col sm:flex-col'>
-                          <div className='flex justify-center gap-5 items-center m-2 mb-3'>
-                            <Image src="/icons/weather/thermometer-warmer.svg" width={65} height={65} alt="levé du soleil" />
-                            <div>
-                              <p className="flex font-bold no-wrap text-xl">{weather.daily.temperature_2m_max[1]} <span className='align-top text-xs font-normal'>{weather.hourly_units.temperature_2m}</span></p>
-                              <p className='text-xs text-gray-400	text-center'>{differenceCalculation(weather.daily.temperature_2m_max[0], weather.daily.temperature_2m_max[1])}</p>
-                            </div>
-                          </div>
-                          <div className='flex justify-center gap-5 items-center m-2'>
-                            <Image src="/icons/weather/thermometer-colder.svg" width={65} height={70} alt="couché du soleil" />
-                            <div>
-                              <p className="flex font-bold no-wrap text-xl">{weather.daily.temperature_2m_min[1]} <span className='align-top text-xs font-normal'>{weather.hourly_units.temperature_2m}</span></p>
-                              <p className='text-xs text-gray-400	text-center'>{differenceCalculation(weather.daily.temperature_2m_min[0], weather.daily.temperature_2m_min[1])}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </CurentWeatherHighlight>
+                        {/* SUNRISE & SUNSET */}
+                        <CurentWeatherHighlight
+                          dataContainerCustomClassName="align-items-center px-3"
+                          data={[
+                            {
+                              imgSrc: "sunrise",
+                              mainData: `${formatTime(weather.daily.sunrise[1])}`,
+                              data: `${timeDifferenceCalculation(weather.daily.sunrise[1], weather.daily.sunrise[0])}`
+                            },
+                            {
+                              imgSrc: "sunset",
+                              mainData: `${formatTime(weather.daily.sunset[1])}`,
+                              data: `${timeDifferenceCalculation(weather.daily.sunset[1], weather.daily.sunset[0])}`
+                            },
+                          ]}
+                        />
+                      </div>
 
-                      {/* SUNRISE & SUNSET */}
-                      <CurentWeatherHighlight title="Heures d'ensoleillement">
-                        <div className='flex justify-between gap-3 max-[300px]:flex-col sm:flex-col'>
-                          <div className='flex justify-center gap-5 items-center m-2 mb-3'>
-                            <Image src="/icons/weather/sunrise.svg" width={65} height={70} alt="levé du soleil" />
-                            <div>
-                              <p className="font-bold">{formatTime(weather.daily.sunrise[1])}</p>
-                              <p className='text-xs text-gray-400	'>{timeDifferenceCalculation(weather.daily.sunrise[1], weather.daily.sunrise[0])}</p>
-                            </div>
-                          </div>
-                          <div className='flex justify-center gap-5 items-center m-2'>
-                            <Image src="/icons/weather/sunset.svg" width={65} height={70} alt="couché du soleil" />
-                            <div>
-                              <p className="font-bold">{formatTime(weather.daily.sunset[1])}</p>
-                              <p className='text-xs text-gray-400	'>{timeDifferenceCalculation(weather.daily.sunset[1], weather.daily.sunset[0])}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </CurentWeatherHighlight>
-
-                      {/* UV INDICE */}
-                      <CurentWeatherHighlight title="Indice UV">
-                        <div className='flex flex-col items-center'>
-                          <Image src="/icons/weather/uv-index.svg" width={75} height={75} alt="indice UV" />
-                          <div className='mt-2'>
-                            <div className="flex flex-nowrap items-center gap-x-1">
-                              {[...Array(12)].map((_, index) => {
-                                return (
-                                  <p className={` ${uvIndicator(weather.daily.uv_index_max[1], index)}`} key={index}> {index} </p>
-                                )
-                              })}
-                            </div>
-                            <p className='text-center font-black uppercase mt-2 py-1'>{uvIndicatorString(weather.daily.uv_index_max[1]).indicator}</p>
-                          </div>
-                        </div>
-                      </CurentWeatherHighlight>
-
-
-                      {/* PRECIPITATION PROBABILITY */}
-                      <CurentWeatherHighlight title="Taux d'humidité">
-                        <div className='flex justify-center items-center h-5/6'>
-                          <p className='mb-3'>
-                            <span className='text-6xl'>{weather.daily.precipitation_probability_max[1]}</span>
-                            <span className='align-top'> %</span>
-                          </p>
-                        </div>
-                      </CurentWeatherHighlight>
-
-                      {/* WIND SPEED */}
-                      <CurentWeatherHighlight title="Vent">
-                        <div className='flex flex-col justify-center items-center h-5/6'>
-                          <p className=''>
-                            <span className='text-6xl'>{weather.current_weather.windspeed}</span>
-                            <span className='align-bottom'> {weather.daily_units.windspeed_10m_max}</span>
-                          </p>
-                          <Image src="/icons/weather/wind.svg" height={30} width={30} alt="indice UV" />
-                        </div>
-                      </CurentWeatherHighlight>
+                      {/* UV INDICE | PRECIPITATION PROBABILITY | WIND SPEED */}
+                      <CurentWeatherHighlight
+                        dataContainerCustomClassName="flex-col"
+                        data={[
+                          {
+                            imgSrc: `uv-index-${roundValue(weather.daily.uv_index_max[1])}`,
+                            mainData: "Indice UV",
+                            data: `${weather.daily.uv_index_max[1]}`
+                          },
+                          {
+                            imgSrc: "humidity",
+                            mainData: "Probalilité de pluie",
+                            data: `${weather.daily.precipitation_probability_max[1]} %`
+                          },
+                          {
+                            imgSrc: "wind",
+                            mainData: "Vent",
+                            data: `${weather.current_weather.windspeed}${weather.daily_units.windspeed_10m_max}`
+                          }
+                        ]} />
 
                       {/* AIR QUALITY */}
-                      <CurentWeatherHighlight title="Qualité de l'air">
-                        <div className='flex flex-col items-center'>
-                          <Image src="/icons/weather/smoke-particles.svg" width={75} height={75} alt="indice UV" />
-                          <div className='mt-2'>1 2 3 5 6 7 8 9</div>
-                        </div>
-                      </CurentWeatherHighlight>
+                      <CurentWeatherHighlight
+                        dataContainerCustomClassName="align-items-center px-3"
+                        mainDataCustomClassName={`${airQualityIndicator(airQuality ? airQuality.hourly.european_aqi[getHourlyDataIndex(weather.current_weather.time, airQuality!.hourly.time)] : -1).color} text-white text-2xl rounded-lg`}
+                        data={[
+                          {
+                            imgSrc: `smoke-particles`,
+                            mainData: `${airQuality ? airQuality.hourly.european_aqi[getHourlyDataIndex(weather.current_weather.time, airQuality!.hourly.time)] : "N/A"} `,
+                            data: `${airQualityIndicator(airQuality ? airQuality.hourly.european_aqi[getHourlyDataIndex(weather.current_weather.time, airQuality!.hourly.time)] : -1).indicator}`
+                          }
+                        ]} />
                     </div>
 
                   </>

@@ -7,10 +7,10 @@ export interface AirQuality {
     timezone_abbreviation: string;
     hourly_units: {
         time: string;
-        european_aqui: string;
+        european_aqi: string;
     };
     hourly: {
-        time: Array<string>;
-        european_aqui: Array<number>;
+        time: string[];
+        european_aqi: number[];
     };
 }

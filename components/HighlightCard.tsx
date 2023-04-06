@@ -1,62 +1,48 @@
 import React from "react";
-import { HightlightCardProps } from '@/interfaces'
+import { HightlightCardProps, CustomProps } from '@/interfaces'
 import Image from "next/image";
+import { CldImage } from "next-cloudinary";
 
-export const CurentWeatherHighlight = ({ title, children }: HightlightCardProps) => {
+export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContainerCustomClassName, mainDataCustomClassName, unit, title } : CustomProps ) => {
+    
     return (
-        <div className="flex-auto sm:flex-initial min-w-1/2 border-current border-2 rounded-lg p-3">
-            <header className='text-sm sm:text-base text-primary font-black p-1 mb-2'>
-                <p className='line-clamp-2'>{title}</p>
-            </header>
-            {children}
-        </div>
+        <div className="flex-auto h-fit w-100 border-current border-2 rounded-lg p-3">
+            {
+                title === undefined ?
 
-    )
-};
-export const CurentWeatherHighlightDouble = ({ title, data, imgSrc }: HightlightCardProps) => {
-    return (
-        <div className="flex-auto sm:flex-initial min-w-1/2 border-current border-2 rounded-lg p-3">
+                null 
+                :
+                <header className='text-sm sm:text-base text-white font-black p-1 mb-2'>
+                    <p className='line-clamp-2'>{title}</p>
+                </header>
+
+            }
             <div className='flex divide-x-2 divide-gray-700'>
-                <div className='flex-1 text-center px-2'>
-                    <Image className='mx-auto' src={`${imgSrc}`} width={55} height={55} alt={title} />
-                    <p className='text--xs sm:text-md font-black'>{title}</p>
-                    <p className='text-xs'>{data}</p>
-                </div>
-                <div className='flex-1 text-center px-2'>
-                    <Image className='mx-auto' src={`${imgSrc}`} width={55} height={55} alt={title} />
-                    <p className='text--xs sm:text-md font-black'>{title}</p>
-                    <p className='text-xs'>{data}</p>
-                </div>
-
-
+                {data!.map((item, index) => {
+                    return (
+                        <div className={`flex justify-center items-center flex-1 ${dataContainerCustomClassName} text-center px-2 my-auto`} key={index}>
+                            { item.imgSrc.includes('uv-index') ? 
+                                <CldImage format={"svg"} width="55" height="55"  src={`Blow/${item.imgSrc}`}  alt={item.imgSrc} />
+                                : 
+                                <Image src={`/icons/weather/${item.imgSrc}.svg`} width={55} height={55} alt={item.imgSrc} />
+                            }
+                            
+                            <div>
+                                <p className={`text-xs sm:text-md font-black mb-1 ${mainDataCustomClassName} `}>
+                                    {item.mainData}
+                                    {
+                                        unit === undefined ?
+                                        null
+                                        : 
+                                        <span className='align-top text-xs font-normal'>{unit}</span>
+                                    }
+                                </p>
+                                <p className='text-xs'>{item.data}</p>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
-
-        </div>
-
-    )
-};
-export const CurentWeatherHighlightTriple = ({ title, data, imgSrc }: HightlightCardProps) => {
-    return (
-        <div className="flex-auto sm:flex-initial min-w-1/2 border-current border-2 rounded-lg p-3">
-            <div className='flex divide-x-2 divide-gray-700'>
-                <div className='flex-1 text-center px-2'>
-                    <Image className='mx-auto' src={`${imgSrc}`} width={55} height={55} alt={title} />
-                    <p className='text--xs sm:text-md font-black'>{title}</p>
-                    <p className='text-xs'>{data}</p>
-                </div>
-                <div className='flex-1 text-center px-2'>
-                    <Image className='mx-auto' src={`${imgSrc}`} width={55} height={55} alt={title} />
-                    <p className='text--xs sm:text-md font-black'>{title}</p>
-                    <p className='text-xs'>{data}</p>
-                </div>
-                <div className='flex-1 text-center px-2'>
-                    <Image className='mx-auto' src={`${imgSrc}`} width={55} height={55} alt={title} />
-                    <p className='text--xs sm:text-md font-black'>{title}</p>
-                    <p className='text-xs'>{data}</p>
-                </div>
-
-            </div>
-
         </div>
 
     )
