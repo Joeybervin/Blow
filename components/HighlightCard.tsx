@@ -1,5 +1,5 @@
 import React from "react";
-import { HightlightCardProps, CustomProps } from '@/interfaces'
+import { CustomProps } from '@/interfaces'
 import Image from "next/image";
 import { CldImage } from "next-cloudinary";
 
@@ -12,7 +12,7 @@ export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContain
 
                 null 
                 :
-                <header className='text-sm sm:text-base text-white font-black p-1 mb-2'>
+                <header className='text-sm sm:text-base text-primary-content font-black p-1 mb-2'>
                     <p className='line-clamp-2'>{title}</p>
                 </header>
 
@@ -28,7 +28,7 @@ export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContain
                             }
                             
                             <div>
-                                <p className={`text-xs sm:text-md font-black mb-1 ${mainDataCustomClassName} `}>
+                                <p className={`text-xs sm:text-md font-black font-secondary-content mb-1 ${mainDataCustomClassName} `}>
                                     {item.mainData}
                                     {
                                         unit === undefined ?
@@ -47,13 +47,3 @@ export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContain
 
     )
 };
-
-export const WeekWeatherHighlight = ({ title, children }: HightlightCardProps) => {
-    return (
-        <div className="">
-            <p>week</p>
-        </div>
-
-    )
-};
-

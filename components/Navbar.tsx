@@ -21,32 +21,31 @@ export const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme
         }
     }
 
-    console.log("THEME : ",theme)
     return (
-        <nav className={`navbar p-0 ${visibility} `} >
+        <nav className={`flex items-center navbar p-0 ${visibility}`} >
 
             <div className="navbar-start">
-                <p className="text-3xl font-black font-inherit italic max-h-fit" >Blow</p>
+                <Image src="/images/logo.png"  width={120} height={120} alt='blow' />
             </div>
 
             <div className="navbar-end">
-                <div className="dropdown dropdown-end">
-                    <label tabIndex={0} className="btn btn-circle  btn-sm btn-outline mb-7 mr-2">
-                        <Image src={`/icons/theme/${theme}-${themeIcon}.png`} width={24} height={24} alt="" />
+                <div className="dropdown dropdown-end my-auto">
+                    <label tabIndex={0} className="btn btn-circle  btn-sm btn-outline  mr-2">
+                        <Image src={`/images/theme/${theme}-${themeIcon}.png`} width={24} height={24} alt={`Theme ${theme}`} />
                     </label>
 
 
-                    <div className="dropdown-content glass flex flex-col rounded space-y-2.5 py-3 px-2">
+                    <div className="dropdown-content glass flex flex-col rounded space-y-2.5 py-3 px-2 mt-5">
                         <button data-set-theme="cupcake" onClick={() => { changeTheme("cupcake", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/icons/theme/cupcake-default.png`} width={24} height={24} alt="" />
+                            <Image src={`/images/theme/cupcake-default.png`} width={24} height={24} alt="" />
                         </button>
 
                         <button data-set-theme="wireframe" onClick={() => { changeTheme("wireframe", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/icons/theme/${theme}-light.png`} width={24} height={24} alt="" />
+                            <Image src={`/images/theme/${theme}-light.png`} width={24} height={24} alt="" />
                         </button>
 
                         <button data-set-theme="dark" onClick={() => { changeTheme("dark", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/icons/theme/${theme}-dark.png`} width={24} height={24} alt="" />
+                            <Image src={`/images/theme/${theme}-dark.png`} width={24} height={24} alt="" />
                         </button>
                     </div>
                 </div>

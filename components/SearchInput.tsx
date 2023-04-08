@@ -26,7 +26,7 @@ export const SearchInput: React.FC<InputProps> = ({ onChange, value, onGpsData, 
                 <input
                     type="search"
                     placeholder="Rechercher..."
-                    className="input input-bordered border-l-0 w-full"
+                    className="input input-bordered border-l-0 w-full caret-primary"
                     onChange={onChange}
                     onKeyDown={handleKeyDown}
                     value={value}

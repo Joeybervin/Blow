@@ -11,5 +11,6 @@ export type { LocationCoords } from './locationCoords';
 export type { NavbarProps } from './navbarProps.interface';
 export type { Position } from './position.interface';
 export type { Weather } from './weather';
+export type { WeekDayWeatherCardProps } from './weekDayWeatherCardProps.interface';
 
 
