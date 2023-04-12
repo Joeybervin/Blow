@@ -5,7 +5,7 @@ import { formatTime } from "@/helpers";
 import { CookieValueTypes } from "cookies-next";
 
 interface ChartProps {
-    label: string;
+    label?: string;
     labels: string[];
     data: number[];
     borderColor?: string;
@@ -17,7 +17,6 @@ interface ChartProps {
     axeYTitle?: string;
     axeXTitle?: string;
     theme?: string | CookieValueTypes;
-    customPointStyle?: number[] | string[];
     displayYAxe : boolean;
 }
 

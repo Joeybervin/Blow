@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CustomProps } from '@/interfaces'
 import Image from "next/image";
 import { CldImage } from "next-cloudinary";
 
 export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContainerCustomClassName, mainDataCustomClassName, unit, title } : CustomProps ) => {
+    
+
     
     return (
         <div className="flex-auto h-fit w-100 border-current border-2 rounded-lg p-3">
@@ -12,7 +14,7 @@ export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContain
 
                 null 
                 :
-                <header className='text-sm sm:text-base text-primary-content font-black p-1 mb-2'>
+                <header className='text-xs sm:tesxt-sm text-primary-content font-black  mb-2'>
                     <p className='line-clamp-2'>{title}</p>
                 </header>
 
@@ -22,7 +24,7 @@ export const CurentWeatherHighlight:React.FC<CustomProps> = ( {data, dataContain
                     return (
                         <div className={`flex justify-center items-center flex-1 ${dataContainerCustomClassName} text-center px-2 my-auto`} key={index}>
                             { item.imgSrc.includes('uv-index') ? 
-                                <CldImage format={"svg"} width="55" height="55"  src={`Blow/${item.imgSrc}`}  alt={item.imgSrc} />
+                                <CldImage format={"svg"} width="55" height="55" className="" src={`Blow/${item.imgSrc}`}  alt={item.imgSrc} />
                                 : 
                                 <Image src={`/icons/weather/${item.imgSrc}.svg`} width={55} height={55} alt={item.imgSrc} />
                             }

@@ -10,7 +10,7 @@ export function getDayOfMonth(dateString: string):number {
     const dayOfMonth = date.getDate();
     return dayOfMonth
 }
- 
+
 export function formatDate(dateString : string ): string {
     const monthsOfYear = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     const date = new Date(dateString);
@@ -22,7 +22,6 @@ export function formatDate(dateString : string ): string {
 };
 
 export function formatTime(timeString: string, OnlyHours : boolean): string {
-
     const date = new Date(timeString);
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
