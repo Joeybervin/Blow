@@ -22,29 +22,30 @@ export const Navbar: React.FC<NavbarProps> = ({ visibility, onChangeTheme, theme
     }
 
     return (
-        <nav className={`flex items-center navbar p-0 ${visibility}`} >
+        <nav className={`${visibility}`} >
+            <div className="navbar">
+                <div className="navbar-start">
+                    <Image priority src="/images/logo.png" style={{width: "auto", height:"auto"}} width={120} height={120} alt='blow' />
+                </div>
 
-            <div className="navbar-start">
-                <Image priority src="/images/logo.png" style={{width: "auto", height:"auto"}} width={120} height={120} alt='blow' />
-            </div>
+                <div className="navbar-end">
+                    <div className="dropdown dropdown-end my-auto">
+                        <label tabIndex={0} className="btn btn-circle mt-1 btn-sm btn-outline  mr-2">
+                            <Image src={`/images/theme/${theme}-${themeIcon}.png`} width={24} height={24} alt={`Theme ${theme}`} />
+                        </label>
+                        <div className="dropdown-content glass flex flex-col rounded space-y-2.5 py-3 px-2 mt-5">
+                            <button data-set-theme="cupcake" onClick={() => { changeTheme("cupcake", true) }} className="btn btn-circle btn-sm btn-outline">
+                                <Image src={`/images/theme/cupcake-default.png`} width={24} height={24} alt="default theme" />
+                            </button>
 
-            <div className="navbar-end">
-                <div className="dropdown dropdown-end my-auto">
-                    <label tabIndex={0} className="btn btn-circle  btn-sm btn-outline  mr-2">
-                        <Image src={`/images/theme/${theme}-${themeIcon}.png`} width={24} height={24} alt={`Theme ${theme}`} />
-                    </label>
-                    <div className="dropdown-content glass flex flex-col rounded space-y-2.5 py-3 px-2 mt-5">
-                        <button data-set-theme="cupcake" onClick={() => { changeTheme("cupcake", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/images/theme/cupcake-default.png`} width={24} height={24} alt="default theme" />
-                        </button>
+                            <button data-set-theme="wireframe" onClick={() => { changeTheme("wireframe", true) }} className="btn btn-circle btn-sm btn-outline">
+                                <Image src={`/images/theme/${theme}-light.png`} width={24} height={24} alt="light theme" />
+                            </button>
 
-                        <button data-set-theme="wireframe" onClick={() => { changeTheme("wireframe", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/images/theme/${theme}-light.png`} width={24} height={24} alt="light theme" />
-                        </button>
-
-                        <button data-set-theme="dark" onClick={() => { changeTheme("dark", true) }} className="btn btn-circle btn-sm btn-outline">
-                            <Image src={`/images/theme/${theme}-dark.png`} width={24} height={24}  alt="dark theme" />
-                        </button>
+                            <button data-set-theme="dark" onClick={() => { changeTheme("dark", true) }} className="btn btn-circle btn-sm btn-outline">
+                                <Image src={`/images/theme/${theme}-dark.png`} width={24} height={24}  alt="dark theme" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,14 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
-import { createUserCookiesPreferences } from "@/helpers"
 import { getCookie, hasCookie } from 'cookies-next';
-
-export const Modal: React.FC = () => {
+import { EssentialsCookies } from "@/interfaces";
 
     interface CookiesParams {
         theme: boolean ;
         location: boolean ;
     }
+    interface ModalProps {
+        onCookiePreferences: (pref: string, cookieValue?: EssentialsCookies) => void;
+    }
+
+export const Modal: React.FC<ModalProps> = ({onCookiePreferences}) => {
     
     const [cookiesChoices, setCookiesChoices] = useState<CookiesParams>({ theme: hasCookie("savedTheme") ? Boolean(getCookie("savedTheme")) : false, location:  hasCookie("savedLocation") ? Boolean(getCookie("savedLocation")) : false });
     const [cookiesDoc, setCookiesDoc] = useState<string>("cookiesDocPart1");
@@ -137,9 +140,9 @@ export const Modal: React.FC = () => {
                     </div>
 
                     <div className="flex flex-wrap modal-action mt-4">
-                        <label onClick={() => createUserCookiesPreferences("allRejected")} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-outline text-sm normal-case hover:btn-error my-1 ml-2">Tout refuser</label>
-                        <label onClick={() => createUserCookiesPreferences("specific", cookiesChoices)} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-outline text-sm normal-case h-fit hover:btn-success my-1">Autoriser la sélection</label>
-                        <label onClick={() => createUserCookiesPreferences("allAccepted")} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-success text-sm normal-case my-1">Tout autoriser</label>
+                        <label onClick={() => onCookiePreferences("allRejected")} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-outline text-sm normal-case hover:btn-error my-1 ml-2">Tout refuser</label>
+                        <label onClick={() => onCookiePreferences("specific", cookiesChoices)} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-outline text-sm normal-case h-fit hover:btn-success my-1">Autoriser la sélection</label>
+                        <label onClick={() => onCookiePreferences("allAccepted")} htmlFor="my-modal-6" className="flex-auto sm:flex-initial btn btn-success text-sm normal-case my-1">Tout autoriser</label>
                     </div>
 
                 </div>

@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import { createUserCookiesPreferences } from "@/helpers/index"
 import { hasCookie } from 'cookies-next';
 import Modal from './Modal';
+import { EssentialsCookies } from "@/interfaces";
 
-export const CookiesToast: React.FC = () => {
+export const CookiesToast: React.FC = ()  => {
 
     const [cookiesPreferencesSelected, setCookiesPreferencesSelected] = useState<boolean>()
+    
 
     useEffect(() => {
         const visitStatus = hasCookie('savedTheme')
         setCookiesPreferencesSelected(visitStatus)
     }, []);
+    
+    const CookiePreferences = (pref : string, cookieValue?: EssentialsCookies): void => {
+        setCookiesPreferencesSelected(true);
+        createUserCookiesPreferences(pref, cookieValue);
+    }
 
     return (
         <>
@@ -29,14 +36,14 @@ export const CookiesToast: React.FC = () => {
                         <p className="text-xs">Nous utilisons des cookies ou des technologies équivalentes pour stocker et/ou accéder à des informations sur votre appareil.</p>
                         <div className="flex flex-wrap">
                             <label className="btn btn-sm text-xs normal-case" htmlFor="my-modal-6">Gérer ⚙️</label>
-                            <button onClick={() => createUserCookiesPreferences("allAccepted")} className="btn btn-sm btn-outline btn-success text-xs normal-case">Tout accepter</button>
-                            <button onClick={() => createUserCookiesPreferences("allRejected")} className="btn btn-sm btn-outline btn-error text-xs normal-case">Tout refuser</button>
+                            <button onClick={() => CookiePreferences("allAccepted")} className="btn btn-sm btn-outline btn-success text-xs normal-case">Tout accepter</button>
+                            <button onClick={() => CookiePreferences("allRejected")} className="btn btn-sm btn-outline btn-error text-xs normal-case">Tout refuser</button>
                         </div>
                     </div>
                 </div>
             }
 
-            < Modal />
+            < Modal onCookiePreferences={CookiePreferences} />
         </>
     )
 
