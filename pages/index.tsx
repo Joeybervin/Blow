@@ -356,7 +356,7 @@ export default function Home({ savedTheme }: HomeProps) {
 export const getServerSideProps = ({ req, res }: GetServerSidePropsContext) => {
 
   const allSavedCookies = getCookies({ req, res });
-  const savedTheme = allSavedCookies.theme ?? 'cupcake';
+  const savedTheme = allSavedCookies.theme ?? 'dark';
 
   return {
     props: {
